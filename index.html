@@ -43,10 +43,10 @@
 <div class="carousel-topline"><span class="carousel-live-dot"></span><span>MATCHQIP · WINDOWS APPLICATION</span><span class="carousel-version">v1.0.0</span></div>
 <div class="carousel-viewport">
 <figure class="app-slide is-active"><img src="/assets/app-upload-validation.png" alt="Matchqip Windows application showing document upload and validation log" fetchpriority="high"><figcaption><strong>Document upload and validation</strong><span>Add supplier documents and review validation records.</span></figcaption></figure>
-<figure class="app-slide"><img src="/assets/app-documents-list.png" alt="Matchqip document list showing quotation and invoice files with purchase number selection" loading="lazy"><figcaption><strong>Organise related documents</strong><span>Group quotation, purchase order and invoice files by purchase.</span></figcaption></figure>
-<figure class="app-slide"><img src="/assets/app-discrepancy-findings.png" alt="Matchqip analysis results highlighting an amount in question and high impact findings" loading="lazy"><figcaption><strong>Discrepancy findings</strong><span>Review flagged differences and amounts that need attention.</span></figcaption></figure>
-<figure class="app-slide"><img src="/assets/app-validation-log.png" alt="Matchqip validation log showing analysis results and review feedback controls" loading="lazy"><figcaption><strong>Validation log</strong><span>Record whether findings were correct, missed or need clarification.</span></figcaption></figure>
-<figure class="app-slide"><img src="/assets/app-about-settings.png" alt="Matchqip about and settings panels showing local data controls" loading="lazy"><figcaption><strong>About and local settings</strong><span>Review application information and manage locally stored data.</span></figcaption></figure>
+<figure class="app-slide" hidden><img src="/assets/app-documents-list.png" alt="Matchqip document list showing quotation and invoice files with purchase number selection" loading="lazy"><figcaption><strong>Organise related documents</strong><span>Group quotation, purchase order and invoice files by purchase.</span></figcaption></figure>
+<figure class="app-slide" hidden><img src="/assets/app-discrepancy-findings.png" alt="Matchqip analysis results highlighting an amount in question and high impact findings" loading="lazy"><figcaption><strong>Discrepancy findings</strong><span>Review flagged differences and amounts that need attention.</span></figcaption></figure>
+<figure class="app-slide" hidden><img src="/assets/app-validation-log.png" alt="Matchqip validation log showing analysis results and review feedback controls" loading="lazy"><figcaption><strong>Validation log</strong><span>Record whether findings were correct, missed or need clarification.</span></figcaption></figure>
+<figure class="app-slide" hidden><img src="/assets/app-about-settings.png" alt="Matchqip about and settings panels showing local data controls" loading="lazy"><figcaption><strong>About and local settings</strong><span>Review application information and manage locally stored data.</span></figcaption></figure>
 </div>
 <div class="carousel-controls"><button class="carousel-arrow" type="button" data-slide-prev aria-label="Previous screenshot">‹</button><div class="carousel-dots" role="group" aria-label="Choose application screenshot"><button class="carousel-dot is-active" type="button" data-slide="0" aria-label="Show screenshot 1" aria-current="true"></button><button class="carousel-dot" type="button" data-slide="1" aria-label="Show screenshot 2"></button><button class="carousel-dot" type="button" data-slide="2" aria-label="Show screenshot 3"></button><button class="carousel-dot" type="button" data-slide="3" aria-label="Show screenshot 4"></button><button class="carousel-dot" type="button" data-slide="4" aria-label="Show screenshot 5"></button></div><span class="carousel-count" aria-live="polite">1 / 5</span><button class="carousel-arrow" type="button" data-slide-next aria-label="Next screenshot">›</button></div>
 </div><p class="hero-caption">Actual Matchqip v1.0.0 application screens. Select the arrows or dots to browse.</p></div></div></section>
@@ -106,29 +106,46 @@
 <div class="footer-links"><a href="#features">Features</a><a href="#product">Software</a><a href="#industries">Industries</a><a href="#faq">FAQ</a><a href="https://alkabalcharlie.github.io/matchqip-privacy/">Privacy</a><a href="mailto:chuka.cokafor@gmail.com">Contact</a></div>
 <span class="copyright">© 2026 Matchqip. All rights reserved.</span>
 </div></footer>
-<script src="/main.js"></script>
 <script>
 (() => {
-  const slides = [...document.querySelectorAll('.app-slide')];
-  const dots = [...document.querySelectorAll('.carousel-dot')];
+  const slides = Array.from(document.querySelectorAll('.app-slide'));
+  const dots = Array.from(document.querySelectorAll('.carousel-dot'));
   const count = document.querySelector('.carousel-count');
-  if (slides.length && dots.length) {
-    let current = 0;
-    const show = (index) => {
-      current = (index + slides.length) % slides.length;
-      slides.forEach((slide, i) => { slide.classList.toggle('is-active', i === current); slide.setAttribute('aria-hidden', i === current ? 'false' : 'true'); });
-      dots.forEach((dot, i) => { dot.classList.toggle('is-active', i === current); if (i === current) dot.setAttribute('aria-current', 'true'); else dot.removeAttribute('aria-current'); });
-      if (count) count.textContent = `${current + 1} / ${slides.length}`;
-    };
-    document.querySelector('[data-slide-prev]')?.addEventListener('click', () => show(current - 1));
-    document.querySelector('[data-slide-next]')?.addEventListener('click', () => show(current + 1));
-    dots.forEach(dot => dot.addEventListener('click', () => show(Number(dot.dataset.slide))));
-    show(0);
+  let current = 0;
+
+  function showSlide(index) {
+    if (!slides.length) return;
+    current = (index + slides.length) % slides.length;
+    slides.forEach((slide, i) => {
+      const active = i === current;
+      slide.hidden = !active;
+      slide.classList.toggle('is-active', active);
+      slide.setAttribute('aria-hidden', String(!active));
+    });
+    dots.forEach((dot, i) => {
+      const active = i === current;
+      dot.classList.toggle('is-active', active);
+      if (active) dot.setAttribute('aria-current', 'true');
+      else dot.removeAttribute('aria-current');
+    });
+    if (count) count.textContent = `${current + 1} / ${slides.length}`;
   }
+
+  document.querySelector('[data-slide-prev]')?.addEventListener('click', () => showSlide(current - 1));
+  document.querySelector('[data-slide-next]')?.addEventListener('click', () => showSlide(current + 1));
+  dots.forEach(dot => dot.addEventListener('click', () => showSlide(Number(dot.dataset.slide))));
+  showSlide(0);
+
   const menu = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.main-nav');
-  menu?.addEventListener('click', () => { const open = nav.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open)); });
-  nav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { nav.classList.remove('open'); menu?.setAttribute('aria-expanded', 'false'); }));
+  menu?.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    menu.setAttribute('aria-expanded', String(open));
+  });
+  nav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+    nav.classList.remove('open');
+    menu?.setAttribute('aria-expanded', 'false');
+  }));
 })();
 </script>
 
